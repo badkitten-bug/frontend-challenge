@@ -3,31 +3,50 @@ import { useParams, Link } from 'react-router-dom'
 import { products } from '../data/products'
 import { Product } from '../types/Product'
 import PricingCalculator from '../components/PricingCalculator'
+import QuoteSimulatorModal from '../components/QuoteSimulatorModal'
 import './ProductDetail.css'
 
 const ProductDetail = () => {
   const { id } = useParams<{ id: string }>()
   const [product, setProduct] = useState<Product | null>(null)
+  const [loading, setLoading] = useState(true)
   const [selectedColor, setSelectedColor] = useState<string>('')
   const [selectedSize, setSelectedSize] = useState<string>('')
   const [quantity, setQuantity] = useState<number>(1)
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [quoteDetails, setQuoteDetails] = useState({ quantity: 1, totalPrice: 0 })
 
   useEffect(() => {
+    setLoading(true)
     if (id) {
-      const foundProduct = products.find(p => p.id === parseInt(id))
-      setProduct(foundProduct || null)
-      
-      // Set default selections
-      if (foundProduct?.colors && foundProduct.colors.length > 0) {
-        setSelectedColor(foundProduct.colors[0])
-      }
-      if (foundProduct?.sizes && foundProduct.sizes.length > 0) {
-        setSelectedSize(foundProduct.sizes[0])
-      }
+      // Simulate API call delay
+      setTimeout(() => {
+        const foundProduct = products.find(p => p.id === parseInt(id))
+        setProduct(foundProduct || null)
+        
+        // Set default selections
+        if (foundProduct?.colors && foundProduct.colors.length > 0) {
+          setSelectedColor(foundProduct.colors[0])
+        }
+        if (foundProduct?.sizes && foundProduct.sizes.length > 0) {
+          setSelectedSize(foundProduct.sizes[0])
+        }
+        setLoading(false)
+      }, 500)
     }
   }, [id])
 
+  const handleQuoteRequest = (quantity: number, totalPrice: number) => {
+    setQuoteDetails({ quantity, totalPrice })
+    setIsModalOpen(true)
+  }
+
   // Handle loading state
+  if (loading) {
+    return <div className="container"><p>Cargando producto...</p></div>
+  }
+
+  // Handle not found state
   if (!product) {
     return (
       <div className="container">
@@ -153,61 +172,23 @@ const ProductDetail = () => {
                 </div>
               </div>
             )}
-
-            {/* Quick Actions */}
-            <div className="product-actions">
-              <div className="quantity-selector">
-                <label className="quantity-label l1">Cantidad:</label>
-                <div className="quantity-controls">
-                  <button 
-                    onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                    className="quantity-btn"
-                  >
-                    <span className="material-icons">remove</span>
-                  </button>
-                  <input 
-                    type="number" 
-                    value={quantity} 
-                    onChange={(e) => setQuantity(Math.max(1, parseInt(e.target.value) || 1))}
-                    className="quantity-input"
-                    min="1"
-                  />
-                  <button 
-                    onClick={() => setQuantity(quantity + 1)}
-                    className="quantity-btn"
-                  >
-                    <span className="material-icons">add</span>
-                  </button>
-                </div>
-              </div>
-
-              <div className="action-buttons">
-                <button 
-                  className={`btn btn-primary cta1 ${!canAddToCart ? 'disabled' : ''}`}
-                  disabled={!canAddToCart}
-                  onClick={() => alert('Función de agregar al carrito por implementar')}
-                >
-                  <span className="material-icons">shopping_cart</span>
-                  {canAddToCart ? 'Agregar al carrito' : 'No disponible'}
-                </button>
-                
-                <button 
-                  className="btn btn-secondary cta1"
-                  onClick={() => alert('Función de cotización por implementar')}
-                >
-                  <span className="material-icons">calculate</span>
-                  Solicitar cotización
-                </button>
-              </div>
-            </div>
           </div>
         </div>
 
         {/* Pricing Calculator */}
         <div className="pricing-section">
-          <PricingCalculator product={product} />
+          <PricingCalculator product={product} onQuoteRequest={handleQuoteRequest} />
         </div>
       </div>
+
+      {isModalOpen && (
+        <QuoteSimulatorModal
+          product={product}
+          quantity={quoteDetails.quantity}
+          totalPrice={quoteDetails.totalPrice}
+          onClose={() => setIsModalOpen(false)}
+        />
+      )}
     </div>
   )
 }

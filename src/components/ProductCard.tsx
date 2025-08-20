@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import { Product } from '../types/Product'
+import { formatChileanPrice } from '../utils/formatting'
 import './ProductCard.css'
 
 interface ProductCardProps {
@@ -15,8 +16,7 @@ const ProductCard = ({ product }: ProductCardProps) => {
       case 'inactive':
         return <span className="status-badge status-inactive l1">No disponible</span>
       case 'pending':
-        // Handle pending status
-        return <span className="status-badge status-active l1">Disponible</span>
+        return <span className="status-badge status-pending l1">Pendiente</span>
       default:
         return null
     }
@@ -24,7 +24,7 @@ const ProductCard = ({ product }: ProductCardProps) => {
 
   // Format price for display
   const formatPrice = (price: number) => {
-    return `$${price.toLocaleString()}` // Missing currency and proper formatting
+    return formatChileanPrice(price)
   }
 
   // Check stock availability
@@ -117,16 +117,13 @@ const ProductCard = ({ product }: ProductCardProps) => {
         </div>
 
         <div className="card-actions">
-          <button 
+          <Link 
+            to={`/product/${product.id}`}
             className="btn btn-secondary l1"
-            onClick={(e) => {
-              e.preventDefault()
-              alert('Función de cotización por implementar')
-            }}
           >
             <span className="material-icons">calculate</span>
             Cotizar
-          </button>
+          </Link>
         </div>
       </div>
     </div>

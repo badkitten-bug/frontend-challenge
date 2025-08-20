@@ -1,6 +1,23 @@
 /* Product List Page Styles */
-.product-list-page {
-  min-height: calc(100vh - 80px);
+.product-list-page .container {
+  padding-top: 32px;
+  padding-bottom: 32px;
+}
+
+.product-list-layout {
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  gap: 32px;
+}
+
+.filters-sidebar {
+  position: sticky;
+  top: 32px;
+  align-self: start;
+}
+
+.product-content {
+  /* This will contain the header and the grid */
 }
 
 /* Page Header */
@@ -86,6 +103,17 @@
 }
 
 /* Responsive */
+@media (max-width: 992px) {
+  .product-list-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .filters-sidebar {
+    position: static;
+    top: auto;
+  }
+}
+
 @media (max-width: 768px) {
   .page-header {
     flex-direction: column;
