@@ -12,7 +12,6 @@ const ProductDetail = () => {
   const [loading, setLoading] = useState(true)
   const [selectedColor, setSelectedColor] = useState<string>('')
   const [selectedSize, setSelectedSize] = useState<string>('')
-  const [quantity, setQuantity] = useState<number>(1)
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [quoteDetails, setQuoteDetails] = useState({ quantity: 1, totalPrice: 0 })
 
@@ -62,9 +61,6 @@ const ProductDetail = () => {
       </div>
     )
   }
-
-  // Validate product status
-  const canAddToCart = product.status === 'active' && product.stock > 0
 
   return (
     <div className="product-detail-page">
